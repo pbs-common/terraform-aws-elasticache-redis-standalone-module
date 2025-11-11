@@ -13,7 +13,7 @@ module "redis" {
 }
 
 module "parameters" {
-  source = "github.com/pbs/terraform-aws-elasticache-parameter-group-module?ref=0.0.1"
+  source = "github.com/pbs/terraform-aws-elasticache-parameter-group-module?ref=1.0.0"
 
   name = var.product
 }
