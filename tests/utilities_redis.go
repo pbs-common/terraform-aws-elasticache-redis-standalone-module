@@ -20,6 +20,7 @@ func testRedis(t *testing.T, variant string) {
 	terraformOptions := &terraform.Options{
 		TerraformDir: terraformDir,
 		LockTimeout:  "5m",
+		Upgrade:      true,
 	}
 
 	defer terraform.Destroy(t, terraformOptions)
@@ -59,12 +60,14 @@ func testRedis(t *testing.T, variant string) {
 		lambdaName := terraform.Output(t, terraformOptions, "lambda_name")
 		assert.Equal(t, expectedLambdaName, lambdaName)
 
-		session, err := session.NewSession()
+		sess, err := session.NewSessionWithOptions(session.Options{
+			SharedConfigState: session.SharedConfigEnable,
+		})
 		if err != nil {
 			t.Fatalf("Failed to create AWS session: %v", err)
 		}
 
-		lambdaSvc := lambda.New(session)
+		lambdaSvc := lambda.New(sess)
 
 		invokeOutput, err := lambdaSvc.Invoke(&lambda.InvokeInput{
 			FunctionName: &lambdaName,
