@@ -17,11 +17,11 @@ variable "product" {
 }
 
 variable "owner" {
-  description = "Tag used to group resources according to product"
+  description = "Tag used to group resources according to owner"
   type        = string
   validation {
     condition     = can(regex("[a-z\\-]+", var.owner))
-    error_message = "The product variable violates approved regex."
+    error_message = "The owner variable violates approved regex."
   }
 }
 
