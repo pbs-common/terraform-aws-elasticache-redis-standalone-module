@@ -250,11 +250,11 @@ variable "private_hosted_zone" {
 
 variable "log_delivery_configurations" {
   description = "List of log delivery configurations. https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/elasticache_cluster#log-delivery-configuration"
-  default = []
+  default     = []
   type = list(object({
-    destination = string
+    destination      = string
     destination_type = string
-    log_format = string
-    log_type = string
+    log_format       = string
+    log_type         = string
   }))
 }

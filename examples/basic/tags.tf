@@ -10,6 +10,17 @@ variable "environment" {
   }
 }
 
+variable "owner" {
+  description = "Tag used to group resources according to owner"
+
+  default = "plops"
+
+  validation {
+    condition     = can(regex("[a-z\\-]+", var.owner))
+    error_message = "The owner variable violates approved regex."
+  }
+}
+
 variable "product" {
   description = "Tag used to group resources according to application"
 
