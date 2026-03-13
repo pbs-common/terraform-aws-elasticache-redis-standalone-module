@@ -8,12 +8,19 @@ GIT_ROOT=$(git rev-parse --show-toplevel)
 
 mkdir -p "$GIT_ROOT"/examples/lambda/artifacts
 
-pushd "$GIT_ROOT"/examples/lambda/src >/dev/null
-pipenv install
-SITE_PACKAGES="$(fd -td -u site-packages "$(pipenv --venv)")"
+PACKAGE_DIR="$GIT_ROOT/examples/lambda/src/package"
+rm -rf "$PACKAGE_DIR"
+mkdir -p "$PACKAGE_DIR"
 
-pushd "$SITE_PACKAGES" >/dev/null
+pip install redis hiredis \
+  --target "$PACKAGE_DIR" \
+  --platform manylinux2014_aarch64 \
+  --only-binary=:all: \
+  --python-version 3.13
+
+pushd "$PACKAGE_DIR" >/dev/null
 zip -r9 "$GIT_ROOT"/examples/lambda/artifacts/handler.zip ./*
 
 popd >/dev/null
-zip -g "$GIT_ROOT"/examples/lambda/artifacts/handler.zip ./*
+pushd "$GIT_ROOT"/examples/lambda/src >/dev/null
+zip -g "$GIT_ROOT"/examples/lambda/artifacts/handler.zip index.py
