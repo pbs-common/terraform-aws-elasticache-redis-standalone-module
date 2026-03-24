@@ -18,7 +18,7 @@ resource "aws_elasticache_replication_group" "replication_group" {
   node_type                   = var.node_type
   notification_topic_arn      = var.notification_topic_arn
   num_cache_clusters          = var.nodes
-  parameter_group_name        = var.parameter_group_name
+  parameter_group_name        = var.parameter_group_name == null ? module.aws_elasticache_parameter_group[0].name : var.parameter_group_name
   port                        = var.port
   preferred_cache_cluster_azs = var.preferred_cache_cluster_azs
   security_group_ids          = local.security_group_ids
@@ -40,4 +40,16 @@ resource "aws_elasticache_replication_group" "replication_group" {
   }
 
   tags = local.tags
+}
+
+module "aws_elasticache_parameter_group" {
+  count  = var.parameter_group_name == null ? 1 : 0
+  source = "github.com/pbs/terraform-aws-elasticache-parameter-group-module?ref=1.1.1"
+
+  name         = local.name
+  organization = var.organization
+  environment  = var.environment
+  product      = var.product
+  owner        = var.owner
+  repo         = var.repo
 }
