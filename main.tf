@@ -44,12 +44,14 @@ resource "aws_elasticache_replication_group" "replication_group" {
 
 module "aws_elasticache_parameter_group" {
   count  = var.parameter_group_name == null ? 1 : 0
-  source = "github.com/pbs/terraform-aws-elasticache-parameter-group-module?ref=1.1.1"
+  source = "github.com/pbs/terraform-aws-elasticache-parameter-group-module?ref=1.2.0"
 
-  name         = local.name
-  organization = var.organization
-  environment  = var.environment
-  product      = var.product
-  owner        = var.owner
-  repo         = var.repo
+  name                    = local.name
+  engine                  = var.engine
+  parameter_group_version = var.engine_version != null ? split(".", var.engine_version)[0] : null
+  organization            = var.organization
+  environment             = var.environment
+  product                 = var.product
+  owner                   = var.owner
+  repo                    = var.repo
 }
