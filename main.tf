@@ -49,7 +49,7 @@ module "aws_elasticache_parameter_group" {
   name                    = local.name
   engine                  = var.engine
   parameter_group_version = var.engine_version != null ? split(".", var.engine_version)[0] : null
-  parameters  = var.extra_parameters
+  parameters              = var.extra_parameters
   organization            = var.organization
   environment             = var.environment
   product                 = var.product
