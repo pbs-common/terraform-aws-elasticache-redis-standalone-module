@@ -258,3 +258,12 @@ variable "log_delivery_configurations" {
     log_type         = string
   }))
 }
+
+variable "extra_parameters" {
+  description = "Additional parameters that will be added to parameter group."
+  type = list(object({
+    name  = string
+    value = string
+  }))
+  default = []
+}
