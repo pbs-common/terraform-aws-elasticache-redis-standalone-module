@@ -41,7 +41,11 @@ func testRedis(t *testing.T, variant string) {
 	expectedName := fmt.Sprintf("ex-tf-redis-%s", variant)
 	expectedARN := fmt.Sprintf("arn:aws:elasticache:%s:%s:replicationgroup:%s", region, accountID, expectedName)
 	expectedMinimumEngineVersionActual := 6.2
+	// Cluster mode enabled prefixes each node with its shard number.
 	expectedMemberClusters := fmt.Sprintf("[%s-001 %s-002]", expectedName, expectedName)
+	if variant == "cluster-mode" {
+		expectedMemberClusters = fmt.Sprintf("[%s-0001-001 %s-0001-002]", expectedName, expectedName)
+	}
 	expectedPartialPrimaryEndpointAddress := expectedName
 	expectedPartialReaderEndpointAddress := expectedName
 

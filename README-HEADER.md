@@ -40,6 +40,20 @@ module "redis" {
 }
 ```
 
+### Topology
+
+By default the module creates a cluster-mode-disabled replication group of `nodes` cache clusters (2), which is the right shape for a cache fronted by a single primary endpoint.
+
+For a sharded, cluster-mode-enabled group, set `num_node_groups` (shards) and `replicas_per_node_group` instead. The two forms are mutually exclusive — the module passes only one of `num_cache_clusters` or `num_node_groups` to the resource, since AWS rejects both together. See [the cluster-mode example](/examples/cluster-mode).
+
+> :warning: A replication group cannot move between cluster mode enabled and disabled in place; switching replaces it, losing the cache. An existing group must be described the way it was created.
+
+`automatic_failover_enabled` defaults to whether the group has somewhere to fail over to: `replicas_per_node_group >= 1` under cluster mode, `nodes >= 2` without it.
+
+### Subnet group
+
+The module creates a subnet group unless `subnet_group_name` names one to use, in which case none is created.
+
 ## Adding This Version of the Module
 
 If this repo is added as a subtree, then the version of the module should be close to the version shown here:

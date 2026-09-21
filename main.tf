@@ -17,7 +17,9 @@ resource "aws_elasticache_replication_group" "replication_group" {
   multi_az_enabled            = var.multi_az_enabled
   node_type                   = var.node_type
   notification_topic_arn      = var.notification_topic_arn
-  num_cache_clusters          = var.nodes
+  num_cache_clusters          = local.num_cache_clusters
+  num_node_groups             = var.num_node_groups
+  replicas_per_node_group     = var.replicas_per_node_group
   parameter_group_name        = var.parameter_group_name == null ? module.aws_elasticache_parameter_group[0].name : var.parameter_group_name
   port                        = var.port
   preferred_cache_cluster_azs = var.preferred_cache_cluster_azs
