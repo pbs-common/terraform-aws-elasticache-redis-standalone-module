@@ -267,3 +267,27 @@ variable "extra_parameters" {
   }))
   default = []
 }
+
+variable "num_node_groups" {
+  description = "(optional) Number of shards for a cluster-mode-enabled replication group. Conflicts with `nodes`: set this and `replicas_per_node_group` for cluster mode enabled, or `nodes` for cluster mode disabled. A replication group cannot move between the two without being replaced, so an existing group must be described the way it was created."
+  default     = null
+  type        = number
+  validation {
+    condition     = var.num_node_groups == null || try(var.num_node_groups >= 1, false)
+    error_message = "The num_node_groups must be at least 1."
+  }
+}
+
+variable "replicas_per_node_group" {
+  description = "(optional) Number of read replicas per shard, for a cluster-mode-enabled replication group. Must be set together with `num_node_groups`."
+  default     = null
+  type        = number
+  validation {
+    condition     = var.replicas_per_node_group == null || try(var.replicas_per_node_group >= 0, false)
+    error_message = "The replicas_per_node_group cannot be negative."
+  }
+  validation {
+    condition     = (var.replicas_per_node_group == null) == (var.num_node_groups == null)
+    error_message = "Set num_node_groups and replicas_per_node_group together (cluster mode enabled), or neither and use nodes instead (cluster mode disabled)."
+  }
+}

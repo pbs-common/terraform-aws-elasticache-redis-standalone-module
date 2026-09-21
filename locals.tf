@@ -1,7 +1,7 @@
 locals {
   name                = var.name != null ? var.name : var.product
   security_group_ids  = var.security_group_ids != null ? var.security_group_ids : [aws_security_group.sg.id]
-  subnet_group_name   = var.subnet_group_name != null ? var.subnet_group_name : aws_elasticache_subnet_group.subnet_group.id
+  subnet_group_name   = var.subnet_group_name != null ? var.subnet_group_name : one(aws_elasticache_subnet_group.subnet_group[*].id)
   vpc_id              = var.vpc_id != null ? var.vpc_id : data.aws_vpc.vpc[0].id
   subnets             = var.subnets != null ? var.subnets : data.aws_subnets.private_subnets[0].ids
   cname               = var.cname != null ? var.cname : "${local.name}-cache"
@@ -22,7 +22,20 @@ locals {
   sg_name        = var.use_prefix ? null : var.sg_name != null ? var.sg_name : local.name
   sg_name_prefix = var.use_prefix ? var.sg_name != null ? var.sg_name : local.name : null
 
-  automatic_failover_enabled = var.automatic_failover_enabled != null ? var.automatic_failover_enabled : var.nodes >= 2
+  # Cluster mode enabled is requested with num_node_groups; the provider rejects num_cache_clusters
+  # alongside it, so only one of the two travels to the resource.
+  cluster_mode_enabled = var.num_node_groups != null
+  num_cache_clusters   = local.cluster_mode_enabled ? null : var.nodes
+
+  # A group has somewhere to fail over to once it has a second node, which is a replica per shard
+  # under cluster mode and a second cache cluster without it.
+  automatic_failover_enabled = (
+    var.automatic_failover_enabled != null ? var.automatic_failover_enabled :
+    local.cluster_mode_enabled ? var.replicas_per_node_group >= 1 : var.nodes >= 2
+  )
+
+  # Only create a subnet group when the caller has not supplied one to use.
+  create_subnet_group = var.subnet_group_name == null
 
   creator = "terraform"
 
