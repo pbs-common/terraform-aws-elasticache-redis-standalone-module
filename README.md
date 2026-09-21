@@ -7,7 +7,7 @@
 Use this URL for the source of the module. See the usage examples below for more details.
 
 ```hcl
-github.com/pbs/terraform-aws-elasticache-redis-standalone-module?ref=3.1.2
+github.com/pbs/terraform-aws-elasticache-redis-standalone-module?ref=x.y.z
 ```
 
 ### Alternative Installation Methods
@@ -28,7 +28,7 @@ Integrate this module like so:
 
 ```hcl
 module "redis" {
-  source = "github.com/pbs/terraform-aws-elasticache-redis-standalone-module?ref=3.1.2"
+  source = "github.com/pbs/terraform-aws-elasticache-redis-standalone-module?ref=x.y.z"
 
   # Tagging Parameters
   organization = var.organization
@@ -40,11 +40,25 @@ module "redis" {
 }
 ```
 
+### Topology
+
+By default the module creates a cluster-mode-disabled replication group of `nodes` cache clusters (2), which is the right shape for a cache fronted by a single primary endpoint.
+
+For a sharded, cluster-mode-enabled group, set `num_node_groups` (shards) and `replicas_per_node_group` instead. The two forms are mutually exclusive — the module passes only one of `num_cache_clusters` or `num_node_groups` to the resource, since AWS rejects both together. See [the cluster-mode example](/examples/cluster-mode).
+
+> :warning: A replication group cannot move between cluster mode enabled and disabled in place; switching replaces it, losing the cache. An existing group must be described the way it was created.
+
+`automatic_failover_enabled` defaults to whether the group has somewhere to fail over to: `replicas_per_node_group >= 1` under cluster mode, `nodes >= 2` without it.
+
+### Subnet group
+
+The module creates a subnet group unless `subnet_group_name` names one to use, in which case none is created.
+
 ## Adding This Version of the Module
 
 If this repo is added as a subtree, then the version of the module should be close to the version shown here:
 
-`3.1.2`
+`x.y.z`
 
 Note, however that subtrees can be altered as desired within repositories.
 
@@ -67,7 +81,7 @@ Below is automatically generated documentation on this Terraform module using [t
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.57.1 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.62.0 |
 
 ## Modules
 
@@ -123,10 +137,12 @@ Below is automatically generated documentation on this Terraform module using [t
 | <a name="input_node_type"></a> [node\_type](#input\_node\_type) | ElastiCache node type | `string` | `"cache.t3.micro"` | no |
 | <a name="input_nodes"></a> [nodes](#input\_nodes) | Number of nodes (primary and replicas) this replication group will have. If Multi-AZ is enabled, the value of this parameter must be at least 2. Updates will occur before other modifications. Conflicts with num\_node\_groups, the deprecatednumber\_cache\_clusters, or the deprecated cluster\_mode. | `number` | `2` | no |
 | <a name="input_notification_topic_arn"></a> [notification\_topic\_arn](#input\_notification\_topic\_arn) | ARN of an SNS topic to send ElastiCache notifications to. Example: arn:aws:sns:us-east-1:012345678999:my\_sns\_topic. | `string` | `null` | no |
+| <a name="input_num_node_groups"></a> [num\_node\_groups](#input\_num\_node\_groups) | (optional) Number of shards for a cluster-mode-enabled replication group. Conflicts with `nodes`: set this and `replicas_per_node_group` for cluster mode enabled, or `nodes` for cluster mode disabled. A replication group cannot move between the two without being replaced, so an existing group must be described the way it was created. | `number` | `null` | no |
 | <a name="input_parameter_group_name"></a> [parameter\_group\_name](#input\_parameter\_group\_name) | Name of the parameter group to be created. | `string` | `null` | no |
 | <a name="input_port"></a> [port](#input\_port) | The port number on which each of the cache nodes will accept connections. Cannot be provided with replication\_group\_id. Changing this value will re-create the resource. | `number` | `6379` | no |
 | <a name="input_preferred_cache_cluster_azs"></a> [preferred\_cache\_cluster\_azs](#input\_preferred\_cache\_cluster\_azs) | List of availability zones in which to create cluster. | `list(string)` | `null` | no |
 | <a name="input_private_hosted_zone"></a> [private\_hosted\_zone](#input\_private\_hosted\_zone) | Private hosted zone to create DNS records in. If null, `create_dns` must be set to false. | `string` | `null` | no |
+| <a name="input_replicas_per_node_group"></a> [replicas\_per\_node\_group](#input\_replicas\_per\_node\_group) | (optional) Number of read replicas per shard, for a cluster-mode-enabled replication group. Must be set together with `num_node_groups`. | `number` | `null` | no |
 | <a name="input_replication_group_description"></a> [replication\_group\_description](#input\_replication\_group\_description) | Description of the replication group to be created. If null, one will be generated using the name of the nodes. | `string` | `null` | no |
 | <a name="input_replication_group_id"></a> [replication\_group\_id](#input\_replication\_group\_id) | Replication group identifier. This parameter is stored as a lowercase string. If null, the name of the nodes will be used. | `string` | `null` | no |
 | <a name="input_security_group_ids"></a> [security\_group\_ids](#input\_security\_group\_ids) | One or more VPC security groups associated with the nodes. If null, use the one provided by this module. | `list(string)` | `null` | no |
