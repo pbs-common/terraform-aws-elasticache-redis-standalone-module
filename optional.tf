@@ -68,6 +68,12 @@ variable "security_group_ids" {
   type        = list(string)
 }
 
+variable "extra_security_group_ids" {
+  description = "Additional VPC security groups to associate with the nodes, appended to `security_group_ids` or to the one provided by this module."
+  default     = []
+  type        = list(string)
+}
+
 variable "snapshot_arns" {
   description = "Single-element string list containing an Amazon Resource Name (ARN) of a Redis RDB snapshot file stored in Amazon S3. The object name cannot contain any commas. Changing snapshot_arns forces a new resource."
   default     = null
