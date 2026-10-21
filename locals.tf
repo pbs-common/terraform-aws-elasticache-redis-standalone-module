@@ -21,6 +21,7 @@ locals {
 
   sg_name        = var.use_prefix ? null : var.sg_name != null ? var.sg_name : local.name
   sg_name_prefix = var.use_prefix ? var.sg_name != null ? var.sg_name : local.name : null
+  sg_description = var.sg_description != null ? var.sg_description : "Controls access to the ${local.name} redis cluster"
 
   # Cluster mode enabled is requested with num_node_groups; the provider rejects num_cache_clusters
   # alongside it, so only one of the two travels to the resource.

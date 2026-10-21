@@ -134,6 +134,12 @@ variable "sg_name" {
   type        = string
 }
 
+variable "sg_description" {
+  description = "Description of the security group to be created. If null, one will be generated using the name of the nodes. Note that the description is immutable: changing it on an existing group replaces the group, and with it every rule attached to the group."
+  default     = null
+  type        = string
+}
+
 variable "replication_group_description" {
   description = "Description of the replication group to be created. If null, one will be generated using the name of the nodes."
   default     = null

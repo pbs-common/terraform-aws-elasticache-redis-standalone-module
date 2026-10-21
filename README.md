@@ -7,7 +7,7 @@
 Use this URL for the source of the module. See the usage examples below for more details.
 
 ```hcl
-github.com/pbs/terraform-aws-elasticache-redis-standalone-module?ref=3.1.4
+github.com/pbs/terraform-aws-elasticache-redis-standalone-module?ref=x.y.z
 ```
 
 ### Alternative Installation Methods
@@ -28,7 +28,7 @@ Integrate this module like so:
 
 ```hcl
 module "redis" {
-  source = "github.com/pbs/terraform-aws-elasticache-redis-standalone-module?ref=3.1.4"
+  source = "github.com/pbs/terraform-aws-elasticache-redis-standalone-module?ref=x.y.z"
 
   # Tagging Parameters
   organization = var.organization
@@ -58,7 +58,7 @@ The module creates a subnet group unless `subnet_group_name` names one to use, i
 
 If this repo is added as a subtree, then the version of the module should be close to the version shown here:
 
-`3.1.4`
+`x.y.z`
 
 Note, however that subtrees can be altered as desired within repositories.
 
@@ -81,7 +81,7 @@ Below is automatically generated documentation on this Terraform module using [t
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.62.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.67.0 |
 
 ## Modules
 
@@ -147,6 +147,7 @@ Below is automatically generated documentation on this Terraform module using [t
 | <a name="input_replication_group_description"></a> [replication\_group\_description](#input\_replication\_group\_description) | Description of the replication group to be created. If null, one will be generated using the name of the nodes. | `string` | `null` | no |
 | <a name="input_replication_group_id"></a> [replication\_group\_id](#input\_replication\_group\_id) | Replication group identifier. This parameter is stored as a lowercase string. If null, the name of the nodes will be used. | `string` | `null` | no |
 | <a name="input_security_group_ids"></a> [security\_group\_ids](#input\_security\_group\_ids) | One or more VPC security groups associated with the nodes. If null, use the one provided by this module. | `list(string)` | `null` | no |
+| <a name="input_sg_description"></a> [sg\_description](#input\_sg\_description) | Description of the security group to be created. If null, one will be generated using the name of the nodes. Note that the description is immutable: changing it on an existing group replaces the group, and with it every rule attached to the group. | `string` | `null` | no |
 | <a name="input_sg_name"></a> [sg\_name](#input\_sg\_name) | Name of the security group to be created. If null, will use the name of the nodes. | `string` | `null` | no |
 | <a name="input_snapshot_arns"></a> [snapshot\_arns](#input\_snapshot\_arns) | Single-element string list containing an Amazon Resource Name (ARN) of a Redis RDB snapshot file stored in Amazon S3. The object name cannot contain any commas. Changing snapshot\_arns forces a new resource. | `list(string)` | `null` | no |
 | <a name="input_snapshot_retention_limit"></a> [snapshot\_retention\_limit](#input\_snapshot\_retention\_limit) | Number of days for which ElastiCache will retain automatic cluster snapshots before deleting them. For example, if you set SnapshotRetentionLimit to 5, then a snapshot that was taken today will be retained for 5 days before being deleted. If the value of SnapshotRetentionLimit is set to zero (0), backups are turned off. Please note that setting a snapshot\_retention\_limit is not supported on cache.t1.micro cache nodes. | `number` | `null` | no |
